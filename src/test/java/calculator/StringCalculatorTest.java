@@ -5,7 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class StringCalculatorTest {
 
@@ -70,8 +70,9 @@ class StringCalculatorTest {
 
 	@DisplayName("문자열 계산기에 음수를 전달하는 경우 RuntimeException 예외 처리")
 	@Test
-	void minusThrowRuntimeException() {
+	void minusThrowsRuntimeException() {
 		// when & then
-		assertThrows(RuntimeException.class, () -> stringCalculator.add("-1"));
+		RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> stringCalculator.add("-1"));
+		assertThat(runtimeException.getMessage()).isEqualTo("음수는 계산할 수 없습니다.");
 	}
 }
