@@ -34,6 +34,14 @@ public class StringCalculatorTest {
     }
 
     @Test
+    @DisplayName("구분자 사이에 숫자가 존재하지 않는 경우, 0으로 판단하여 계산한다.")
+    public void emptyNum() {
+        assertThat(stringCalculator.sum(",3:2"), is(5));
+        assertThat(stringCalculator.sum(",,3:2"), is(5));
+        assertThat(stringCalculator.sum("3, :2"), is(5));
+    }
+
+    @Test
     @DisplayName("숫자가 아닌 문자열이 포함된다면 RuntimeException")
     public void nonNumberString_RuntimeException() {
         assertThrows(RuntimeException.class, () -> stringCalculator.sum("1,2,*"));
