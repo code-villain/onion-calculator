@@ -1,28 +1,40 @@
 package me.siyoon;
 
-import com.sun.org.apache.bcel.internal.generic.ATHROW;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class StringCalculatorTest {
     StringCalculator stringCalculator;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         stringCalculator = new StringCalculator();
     }
 
     @Test
-    public void sum() {
+    public void 기본_구분자로_계산하기() {
         assertThat(stringCalculator.sum(""), is(0));
         assertThat(stringCalculator.sum("1,2"), is(3));
         assertThat(stringCalculator.sum("1,2:3"), is(6));
+    }
+
+    @Test
+    public void 문자열이_숫자가_아니라면_RuntimeException() {
+        try {
+            stringCalculator.sum("1,*:3");
+        } catch (Exception e) {
+            assertThat(e, instanceOf(RuntimeException.class));
+            return;
+        }
+        fail("예외가 발생되어야 하지만 발생하지 않음");
     }
 
     @Test
@@ -39,9 +51,9 @@ public class StringCalculatorTest {
         assertThat(stringCalculator.parse(new String[]{"1", " "}), is(new Integer[]{1, 0}));
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void parsingStringToInt_숫자가_아닌_값이_포함된경우() {
-        stringCalculator.parse(new String[]{"1", "*"});
+        assertThrows(RuntimeException.class, () -> stringCalculator.parse(new String[]{"1", "*"}));
     }
 
     private class StringCalculator {
