@@ -12,7 +12,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class StringCalculatorTest {
-    StringCalculator stringCalculator;
+    private StringCalculator stringCalculator;
 
     @BeforeEach
     public void setUp() {
@@ -37,6 +37,13 @@ public class StringCalculatorTest {
     @DisplayName("숫자가 아닌 문자열이 포함된다면 RuntimeException")
     public void nonNumberString_RuntimeException() {
         assertThrows(RuntimeException.class, () -> stringCalculator.sum("1,2,*"));
+        assertThrows(RuntimeException.class, () -> stringCalculator.sum("&"));
+    }
+
+    @Test
+    @DisplayName("음수인 숫자가 전달 된다면 RuntimeException")
+    public void negativeNum_RuntimeException() {
+        assertThrows(RuntimeException.class, () -> stringCalculator.sum("1,-2"));
     }
 
     @Test
@@ -56,6 +63,11 @@ public class StringCalculatorTest {
     private static class StringCalculator {
         public int sum(String s) {
             return Arrays.stream(parse(split(s)))
+                    .peek(i -> {
+                        if (i < 0) {
+                            throw new RuntimeException();
+                        }
+                    })
                     .reduce(0, Integer::sum);
         }
 
