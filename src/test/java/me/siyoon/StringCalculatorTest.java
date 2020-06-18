@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -87,10 +86,10 @@ public class StringCalculatorTest {
     }
 
     private static class StringCalculator {
-        private static final List<String> separators = new ArrayList<>(Arrays.asList(",", ":"));
+        private static final String[] basicSeparators = new String[]{",", ":"};
 
-        public int sum(String s) {
-            return Arrays.stream(parse(split(s)))
+        public int sum(String inputString) {
+            return Arrays.stream(parse(split(inputString)))
                     .peek(i -> {
                         if (i < 0) {
                             throw new RuntimeException();
@@ -99,31 +98,34 @@ public class StringCalculatorTest {
                     .reduce(0, Integer::sum);
         }
 
-        private String[] split(String s) {
-            if (Objects.isNull(s)) {
+        private String[] split(String inputString) {
+            if (Objects.isNull(inputString)) {
                 return new String[]{};
             }
 
-
-            if (hasCustomSeparator(s)) {
-                addCustomSeparator(s);
-                s = subStringCustomSeparatorSyntax(s);
+            if (hasCustomSeparator(inputString)) {
+                String customSeparator = getCustomSeparator(inputString);
+                inputString = subStringCustomSeparatorSyntax(inputString);
+                return inputString.split(getSplitRegex(customSeparator));
             }
 
-            return s.split(getSplitRegex());
+            return inputString.split(getSplitRegex());
         }
 
         private String subStringCustomSeparatorSyntax(String s) {
             return s.substring(4);
         }
 
-        private void addCustomSeparator(String s) {
-            final char customSeparator = s.charAt(2);
-            separators.add(String.valueOf(customSeparator));
+        private String getCustomSeparator(String s) {
+            return String.valueOf(s.charAt(2));
         }
 
         private String getSplitRegex() {
-            return String.join("|", separators);
+            return String.join("|", basicSeparators);
+        }
+
+        private String getSplitRegex(String customSeparator) {
+            return String.join("|", customSeparator, basicSeparators[0], basicSeparators[1]);
         }
 
         private boolean hasCustomSeparator(String s) {
