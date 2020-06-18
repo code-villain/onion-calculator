@@ -4,9 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -73,9 +71,9 @@ public class StringCalculatorTest {
 
     @Test
     public void parsingStringToInt() {
-        assertThat(stringCalculator.parse(new String[]{"1", "2"}), is(new Integer[]{1, 2}));
-        assertThat(stringCalculator.parse(new String[]{""}), is(new Integer[]{0}));
-        assertThat(stringCalculator.parse(new String[]{"1", " "}), is(new Integer[]{1, 0}));
+        assertThat(stringCalculator.parseStringToInteger(new String[]{"1", "2"}), is(new Integer[]{1, 2}));
+        assertThat(stringCalculator.parseStringToInteger(new String[]{""}), is(new Integer[]{0}));
+        assertThat(stringCalculator.parseStringToInteger(new String[]{"1", " "}), is(new Integer[]{1, 0}));
     }
 
     @Test
@@ -89,13 +87,19 @@ public class StringCalculatorTest {
         private static final String[] basicSeparators = new String[]{",", ":"};
 
         public int sum(String inputString) {
-            return Arrays.stream(parse(split(inputString)))
-                    .peek(i -> {
-                        if (i < 0) {
-                            throw new RuntimeException();
-                        }
-                    })
+            return Arrays.stream(getNumbers(inputString))
+                    .peek(this::assertNumberIsPositive)
                     .reduce(0, Integer::sum);
+        }
+
+        private void assertNumberIsPositive(Integer i) {
+            if (i < 0) {
+                throw new RuntimeException();
+            }
+        }
+
+        private Integer[] getNumbers(String inputString) {
+            return parseStringToInteger(split(inputString));
         }
 
         private String[] split(String inputString) {
@@ -132,7 +136,7 @@ public class StringCalculatorTest {
             return s.matches("\\A//.\n.*");
         }
 
-        private Integer[] parse(String[] strings) {
+        private Integer[] parseStringToInteger(String[] strings) {
             return Arrays.stream(strings)
                     .map(s -> s.equals("") || s.equals(" ") ? "0" : s)
                     .map(Integer::parseInt)
