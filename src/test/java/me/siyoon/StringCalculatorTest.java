@@ -1,15 +1,15 @@
 package me.siyoon;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Objects;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class StringCalculatorTest {
     StringCalculator stringCalculator;
@@ -20,21 +20,23 @@ public class StringCalculatorTest {
     }
 
     @Test
-    public void 기본_구분자로_계산하기() {
-        assertThat(stringCalculator.sum(""), is(0));
+    @DisplayName("기본구분자로 나누어져 있는 숫자들의 합을 계산한다.")
+    public void basicCalcSum() {
         assertThat(stringCalculator.sum("1,2"), is(3));
         assertThat(stringCalculator.sum("1,2:3"), is(6));
     }
 
     @Test
-    public void 문자열이_숫자가_아니라면_RuntimeException() {
-        try {
-            stringCalculator.sum("1,*:3");
-        } catch (Exception e) {
-            assertThat(e, instanceOf(RuntimeException.class));
-            return;
-        }
-        fail("예외가 발생되어야 하지만 발생하지 않음");
+    @DisplayName("빈 문자열이나 null이 전달된 경우 0을 반환한다.")
+    public void emptyOrNull_return0() {
+        assertThat(stringCalculator.sum(""), is(0));
+        assertThat(stringCalculator.sum(null), is(0));
+    }
+
+    @Test
+    @DisplayName("숫자가 아닌 문자열이 포함된다면 RuntimeException")
+    public void nonNumberString_RuntimeException() {
+        assertThrows(RuntimeException.class, () -> stringCalculator.sum("1,2,*"));
     }
 
     @Test
@@ -51,18 +53,17 @@ public class StringCalculatorTest {
         assertThat(stringCalculator.parse(new String[]{"1", " "}), is(new Integer[]{1, 0}));
     }
 
-    @Test
-    public void parsingStringToInt_숫자가_아닌_값이_포함된경우() {
-        assertThrows(RuntimeException.class, () -> stringCalculator.parse(new String[]{"1", "*"}));
-    }
-
-    private class StringCalculator {
+    private static class StringCalculator {
         public int sum(String s) {
             return Arrays.stream(parse(split(s)))
                     .reduce(0, Integer::sum);
         }
 
         private String[] split(String s) {
+            if (Objects.isNull(s)) {
+                return new String[]{};
+            }
+
             return s.split("[" + "," + ":]");
         }
 
