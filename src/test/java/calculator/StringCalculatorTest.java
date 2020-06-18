@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class StringCalculatorTest {
 
@@ -33,6 +34,16 @@ public class StringCalculatorTest {
     @Test
     public void _04_쉼표랑_콜론() {
         assertEquals(6, stringCalculator.add("1,2:3"));
+    }
+
+    @Test
+    public void _05_커스텀_구분자() {
+        assertEquals(6, stringCalculator.add("//;\n1;2;3"));
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void _06_음수_예외처리() {
+        assertEquals(4, stringCalculator.add("-1,2,3"));
     }
 
 }
