@@ -42,6 +42,14 @@ public class StringCalculatorTest {
     }
 
     @Test
+    @DisplayName("문자열 제일 앞 //와 \n 사이에 char1 짜리 커스텀 구분자를 지정할 수 있다")
+    public void customSeparator() {
+        assertThat(stringCalculator.sum("//;\n1;2;3"), is(6));
+        assertThat(stringCalculator.sum("//;\n"), is(0));
+        assertThat(stringCalculator.sum("//;\n1,2:3;4"), is(10));
+    }
+
+    @Test
     @DisplayName("숫자가 아닌 문자열이 포함된다면 RuntimeException")
     public void nonNumberString_RuntimeException() {
         assertThrows(RuntimeException.class, () -> stringCalculator.sum("1,2,*"));
@@ -68,6 +76,13 @@ public class StringCalculatorTest {
         assertThat(stringCalculator.parse(new String[]{"1", " "}), is(new Integer[]{1, 0}));
     }
 
+    @Test
+    public void regexTest() {
+        assertThat("//;\n".matches("\\A//.\n"), is(true));
+        assertThat("//;\n1".matches("\\A//.\n."), is(true));
+        assertThat("//;\n1;2;3".matches("\\A//.\n.*"), is(true));
+    }
+
     private static class StringCalculator {
         public int sum(String s) {
             return Arrays.stream(parse(split(s)))
@@ -84,7 +99,17 @@ public class StringCalculatorTest {
                 return new String[]{};
             }
 
+
+            if (hasCustomSeparator(s)) {
+                final char customSeparator = s.charAt(2);
+                return s.substring(4).split(",|:|" + customSeparator);
+            }
+
             return s.split("[" + "," + ":]");
+        }
+
+        private boolean hasCustomSeparator(String s) {
+            return s.matches("\\A//.\n.*");
         }
 
         private Integer[] parse(String[] strings) {
