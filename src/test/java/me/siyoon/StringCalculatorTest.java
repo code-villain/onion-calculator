@@ -4,8 +4,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -84,6 +87,8 @@ public class StringCalculatorTest {
     }
 
     private static class StringCalculator {
+        private static final List<String> separators = new ArrayList<>(Arrays.asList(",", ":"));
+
         public int sum(String s) {
             return Arrays.stream(parse(split(s)))
                     .peek(i -> {
@@ -101,11 +106,24 @@ public class StringCalculatorTest {
 
 
             if (hasCustomSeparator(s)) {
-                final char customSeparator = s.charAt(2);
-                return s.substring(4).split(",|:|" + customSeparator);
+                addCustomSeparator(s);
+                s = subStringCustomSeparatorSyntax(s);
             }
 
-            return s.split("[" + "," + ":]");
+            return s.split(getSplitRegex());
+        }
+
+        private String subStringCustomSeparatorSyntax(String s) {
+            return s.substring(4);
+        }
+
+        private void addCustomSeparator(String s) {
+            final char customSeparator = s.charAt(2);
+            separators.add(String.valueOf(customSeparator));
+        }
+
+        private String getSplitRegex() {
+            return String.join("|", separators);
         }
 
         private boolean hasCustomSeparator(String s) {
