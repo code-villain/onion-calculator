@@ -19,22 +19,17 @@ public class StringCalculator {
 	}
 
 	private boolean isNumeric(final String strNum) {
-		if (strNum == null) {
-			return false;
-		}
 		try {
-			int i = Integer.parseInt(strNum);
+			Integer.parseInt(strNum);
+			return true;
 		} catch (NumberFormatException nfe) {
 			return false;
 		}
-		return true;
 	}
 
 	private int textToNumberUnlessNegative(final String text) {
 		int number = Integer.parseInt(text);
-		if (number < 0) {
-			throw new RuntimeException("음수는 계산할 수 없습니다.");
-		}
+		assertOnlyPositiveNumbers(number);
 		return number;
 	}
 
@@ -57,8 +52,15 @@ public class StringCalculator {
 		int sum = 0;
 		for (String s : numbers) {
 			int i = Integer.parseInt(s);
+			assertOnlyPositiveNumbers(i);
 			sum += i;
 		}
 		return sum;
+	}
+
+	private void assertOnlyPositiveNumbers(final int number) {
+		if (number < 0) {
+			throw new RuntimeException("음수는 계산할 수 없습니다.");
+		}
 	}
 }
