@@ -1,10 +1,9 @@
 package me.siyoon;
 
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.*;
 
 public class StringCalculator {
-    private static final String[] basicSeparators = new String[]{",", ":"};
+    private static final List<String> basicSeparators = new ArrayList<>(Arrays.asList(",", ":"));
 
     public int sum(String inputString) {
         final Integer[] numbers = convertStringToNumbers(inputString);
@@ -39,12 +38,19 @@ public class StringCalculator {
         }
 
         if (hasCustomSeparator(inputString)) {
-            String customSeparator = getCustomSeparator(inputString);
+            List<String> separators = includeCustomSeparator(inputString);
             inputString = subStringCustomSeparatorSyntax(inputString);
-            return inputString.split(getSplitRegex(customSeparator));
+            return inputString.split(getSplitRegex(separators));
         }
 
         return inputString.split(getSplitRegex());
+    }
+
+    private List<String> includeCustomSeparator(String inputString) {
+        String customSeparator = getCustomSeparator(inputString);
+        List<String> includeCustomSeparator = new ArrayList<>();
+        includeCustomSeparator.add(customSeparator);
+        return includeCustomSeparator;
     }
 
     private boolean hasCustomSeparator(String s) {
@@ -60,10 +66,10 @@ public class StringCalculator {
     }
 
     private String getSplitRegex() {
-        return String.join("|", basicSeparators);
+        return getSplitRegex(basicSeparators);
     }
 
-    private String getSplitRegex(String customSeparator) {
-        return String.join("|", customSeparator, basicSeparators[0], basicSeparators[1]);
+    private String getSplitRegex(List<String> separators) {
+        return String.join("|", separators);
     }
 }
