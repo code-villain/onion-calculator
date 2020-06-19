@@ -3,7 +3,7 @@ package me.siyoon;
 import java.util.*;
 
 public class StringCalculator {
-    private static final List<String> basicSeparators = new ArrayList<>(Arrays.asList(",", ":"));
+    private static final List<String> basicSeparators = Arrays.asList(",", ":");
 
     public int sum(String inputString) {
         final Integer[] numbers = convertStringToNumbers(inputString);
