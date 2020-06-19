@@ -87,18 +87,22 @@ public class StringCalculatorTest {
         private static final String[] basicSeparators = new String[]{",", ":"};
 
         public int sum(String inputString) {
-            return Arrays.stream(getNumbers(inputString))
-                    .peek(this::assertNumberIsPositive)
+            final Integer[] numbers = convertStringToNumbers(inputString);
+
+            if (hasNegativeNumbers(numbers)) {
+                throw new RuntimeException();
+            }
+
+            return Arrays.stream(numbers)
                     .reduce(0, Integer::sum);
         }
 
-        private void assertNumberIsPositive(Integer i) {
-            if (i < 0) {
-                throw new RuntimeException();
-            }
+        private boolean hasNegativeNumbers(Integer[] numbers) {
+            return Arrays.stream(numbers)
+                    .anyMatch(n -> n < 0);
         }
 
-        private Integer[] getNumbers(String inputString) {
+        private Integer[] convertStringToNumbers(String inputString) {
             return parseStringToInteger(split(inputString));
         }
 
