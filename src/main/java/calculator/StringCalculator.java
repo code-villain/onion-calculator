@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class StringCalculator {
-	int add(String text) {
+	int add(final String text) {
 		if (isNullOrEmpty(text)) {
 			return 0;
 		}
@@ -18,7 +18,7 @@ public class StringCalculator {
 		return text == null || text.isEmpty();
 	}
 
-	private boolean isNumeric(String strNum) {
+	private boolean isNumeric(final String strNum) {
 		if (strNum == null) {
 			return false;
 		}
