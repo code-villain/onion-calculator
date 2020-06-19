@@ -4,9 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.Objects;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -60,90 +57,5 @@ public class StringCalculatorTest {
     @DisplayName("음수인 숫자가 전달 된다면 RuntimeException")
     public void negativeNum_RuntimeException() {
         assertThrows(RuntimeException.class, () -> stringCalculator.sum("1,-2"));
-    }
-
-    @Test
-    public void split() {
-        assertThat(stringCalculator.split(""), is(new String[]{""}));
-        assertThat(stringCalculator.split("1,2"), is(new String[]{"1", "2"}));
-        assertThat(stringCalculator.split("1,2:3"), is(new String[]{"1", "2", "3"}));
-    }
-
-    @Test
-    public void parsingStringToInt() {
-        assertThat(stringCalculator.parseStringsToIntegers(new String[]{"1", "2"}), is(new Integer[]{1, 2}));
-        assertThat(stringCalculator.parseStringsToIntegers(new String[]{""}), is(new Integer[]{0}));
-        assertThat(stringCalculator.parseStringsToIntegers(new String[]{"1", " "}), is(new Integer[]{1, 0}));
-    }
-
-    @Test
-    public void regexTest() {
-        assertThat("//;\n".matches("\\A//.\n"), is(true));
-        assertThat("//;\n1".matches("\\A//.\n."), is(true));
-        assertThat("//;\n1;2;3".matches("\\A//.\n.*"), is(true));
-    }
-
-    private static class StringCalculator {
-        private static final String[] basicSeparators = new String[]{",", ":"};
-
-        public int sum(String inputString) {
-            final Integer[] numbers = convertStringToNumbers(inputString);
-
-            if (hasNegativeNumbers(numbers)) {
-                throw new RuntimeException();
-            }
-
-            return Arrays.stream(numbers)
-                    .reduce(0, Integer::sum);
-        }
-        private Integer[] convertStringToNumbers(String inputString) {
-            return parseStringsToIntegers(split(inputString));
-        }
-
-        private boolean hasNegativeNumbers(Integer[] numbers) {
-            return Arrays.stream(numbers)
-                    .anyMatch(n -> n < 0);
-        }
-
-        private Integer[] parseStringsToIntegers(String[] strings) {
-            return Arrays.stream(strings)
-                    .map(s -> s.equals("") || s.equals(" ") ? "0" : s)
-                    .map(Integer::parseInt)
-                    .toArray(Integer[]::new);
-        }
-
-        private String[] split(String inputString) {
-            if (Objects.isNull(inputString)) {
-                return new String[]{};
-            }
-
-            if (hasCustomSeparator(inputString)) {
-                String customSeparator = getCustomSeparator(inputString);
-                inputString = subStringCustomSeparatorSyntax(inputString);
-                return inputString.split(getSplitRegex(customSeparator));
-            }
-
-            return inputString.split(getSplitRegex());
-        }
-
-        private boolean hasCustomSeparator(String s) {
-            return s.matches("\\A//.\n.*");
-        }
-
-        private String getCustomSeparator(String s) {
-            return String.valueOf(s.charAt(2));
-        }
-
-        private String subStringCustomSeparatorSyntax(String s) {
-            return s.substring(4);
-        }
-
-        private String getSplitRegex() {
-            return String.join("|", basicSeparators);
-        }
-
-        private String getSplitRegex(String customSeparator) {
-            return String.join("|", customSeparator, basicSeparators[0], basicSeparators[1]);
-        }
     }
 }
