@@ -71,9 +71,9 @@ public class StringCalculatorTest {
 
     @Test
     public void parsingStringToInt() {
-        assertThat(stringCalculator.parseStringToInteger(new String[]{"1", "2"}), is(new Integer[]{1, 2}));
-        assertThat(stringCalculator.parseStringToInteger(new String[]{""}), is(new Integer[]{0}));
-        assertThat(stringCalculator.parseStringToInteger(new String[]{"1", " "}), is(new Integer[]{1, 0}));
+        assertThat(stringCalculator.parseStringsToIntegers(new String[]{"1", "2"}), is(new Integer[]{1, 2}));
+        assertThat(stringCalculator.parseStringsToIntegers(new String[]{""}), is(new Integer[]{0}));
+        assertThat(stringCalculator.parseStringsToIntegers(new String[]{"1", " "}), is(new Integer[]{1, 0}));
     }
 
     @Test
@@ -96,14 +96,20 @@ public class StringCalculatorTest {
             return Arrays.stream(numbers)
                     .reduce(0, Integer::sum);
         }
+        private Integer[] convertStringToNumbers(String inputString) {
+            return parseStringsToIntegers(split(inputString));
+        }
 
         private boolean hasNegativeNumbers(Integer[] numbers) {
             return Arrays.stream(numbers)
                     .anyMatch(n -> n < 0);
         }
 
-        private Integer[] convertStringToNumbers(String inputString) {
-            return parseStringToInteger(split(inputString));
+        private Integer[] parseStringsToIntegers(String[] strings) {
+            return Arrays.stream(strings)
+                    .map(s -> s.equals("") || s.equals(" ") ? "0" : s)
+                    .map(Integer::parseInt)
+                    .toArray(Integer[]::new);
         }
 
         private String[] split(String inputString) {
@@ -120,12 +126,16 @@ public class StringCalculatorTest {
             return inputString.split(getSplitRegex());
         }
 
-        private String subStringCustomSeparatorSyntax(String s) {
-            return s.substring(4);
+        private boolean hasCustomSeparator(String s) {
+            return s.matches("\\A//.\n.*");
         }
 
         private String getCustomSeparator(String s) {
             return String.valueOf(s.charAt(2));
+        }
+
+        private String subStringCustomSeparatorSyntax(String s) {
+            return s.substring(4);
         }
 
         private String getSplitRegex() {
@@ -134,17 +144,6 @@ public class StringCalculatorTest {
 
         private String getSplitRegex(String customSeparator) {
             return String.join("|", customSeparator, basicSeparators[0], basicSeparators[1]);
-        }
-
-        private boolean hasCustomSeparator(String s) {
-            return s.matches("\\A//.\n.*");
-        }
-
-        private Integer[] parseStringToInteger(String[] strings) {
-            return Arrays.stream(strings)
-                    .map(s -> s.equals("") || s.equals(" ") ? "0" : s)
-                    .map(Integer::parseInt)
-                    .toArray(Integer[]::new);
         }
     }
 }
