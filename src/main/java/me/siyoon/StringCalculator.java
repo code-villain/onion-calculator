@@ -9,7 +9,7 @@ public class StringCalculator {
         final Integer[] numbers = convertStringToNumbers(inputString);
 
         if (hasNegativeNumbers(numbers)) {
-            throw new RuntimeException();
+            throw new NegativeNumberExistException();
         }
 
         return Arrays.stream(numbers)
