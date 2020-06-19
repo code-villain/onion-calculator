@@ -48,7 +48,7 @@ public class StringCalculator {
 
     private List<String> includeCustomSeparator(String inputString) {
         String customSeparator = getCustomSeparator(inputString);
-        List<String> includeCustomSeparator = new ArrayList<>();
+        List<String> includeCustomSeparator = new ArrayList<>(basicSeparators);
         includeCustomSeparator.add(customSeparator);
         return includeCustomSeparator;
     }
