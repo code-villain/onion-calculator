@@ -75,4 +75,12 @@ class StringCalculatorTest {
 		RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> stringCalculator.add("-1"));
 		assertThat(runtimeException.getMessage()).isEqualTo("음수는 계산할 수 없습니다.");
 	}
+
+	@DisplayName("구분자를 포함한 인자에 음수가 포함된 경우 RuntimeException 예외 처리")
+	@Test
+	void numbersContainingMinusThrowsRuntimeException() {
+		// when & then
+		RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> stringCalculator.add("3:-2,6"));
+		assertThat(runtimeException.getMessage()).isEqualTo("음수는 계산할 수 없습니다.");
+	}
 }
