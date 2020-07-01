@@ -1,13 +1,14 @@
 package me.siyoon;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class StringCalculatorTest {
@@ -25,19 +26,18 @@ public class StringCalculatorTest {
         assertThat(stringCalculator.sum("1,2:3"), is(6));
     }
 
-    @Test
+    @ParameterizedTest
+    @NullAndEmptySource
     @DisplayName("빈 문자열이나 null이 전달된 경우 0을 반환한다.")
-    public void emptyOrNull_return0() {
-        assertThat(stringCalculator.sum(""), is(0));
-        assertThat(stringCalculator.sum(null), is(0));
+    public void emptyOrNull_return0(String str) {
+        assertThat(stringCalculator.sum(str), is(0));
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = {",3:2", ",,3:2", "3, :2"})
     @DisplayName("구분자 사이에 숫자가 존재하지 않는 경우, 0으로 판단하여 계산한다.")
-    public void emptyNum() {
-        assertThat(stringCalculator.sum(",3:2"), is(5));
-        assertThat(stringCalculator.sum(",,3:2"), is(5));
-        assertThat(stringCalculator.sum("3, :2"), is(5));
+    public void emptyNum(String input) {
+        assertThat(stringCalculator.sum(input), is(5));
     }
 
     @Test
@@ -48,11 +48,11 @@ public class StringCalculatorTest {
         assertThat(stringCalculator.sum("//;\n1,2:3;4"), is(10));
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = {"1,2,*", "&"})
     @DisplayName("숫자가 아닌 문자열이 포함된다면 RuntimeException")
-    public void nonNumberString_RuntimeException() {
-        assertThrows(RuntimeException.class, () -> stringCalculator.sum("1,2,*"));
-        assertThrows(RuntimeException.class, () -> stringCalculator.sum("&"));
+    public void nonNumberString_RuntimeException(String input) {
+        assertThrows(RuntimeException.class, () -> stringCalculator.sum(input));
     }
 
     @Test
