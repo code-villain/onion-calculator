@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class StringConverter {
-    private static final List<String> basicSeparators = Arrays.asList(",", ":");
+    private static final List<String> BASIC_SEPARATORS = Arrays.asList(",", ":");
+    private static final List<String> STRINGS_TO_CHANGE_TO_ZERO = Arrays.asList("", " ");
+    private static final int INDEX_OF_CUSTOM_SEPARATOR = 2;
+    private static final int LAST_INDEX_OF_CUSTOM_SEPARATOR_SYNTAX = 4;
 
     public Integer[] convertStringToNumbers(String inputString) {
         return parseStringsToIntegers(split(inputString));
@@ -14,7 +17,7 @@ public class StringConverter {
 
     private Integer[] parseStringsToIntegers(String[] strings) {
         return Arrays.stream(strings)
-                .map(s -> s.equals("") || s.equals(" ") ? "0" : s)
+                .map(s -> STRINGS_TO_CHANGE_TO_ZERO.contains(s) ? "0" : s)
                 .map(Integer::parseInt)
                 .toArray(Integer[]::new);
     }
@@ -35,7 +38,7 @@ public class StringConverter {
 
     private List<String> includeCustomSeparator(String inputString) {
         String customSeparator = getCustomSeparator(inputString);
-        List<String> includeCustomSeparator = new ArrayList<>(basicSeparators);
+        List<String> includeCustomSeparator = new ArrayList<>(BASIC_SEPARATORS);
         includeCustomSeparator.add(customSeparator);
         return includeCustomSeparator;
     }
@@ -45,15 +48,15 @@ public class StringConverter {
     }
 
     private String getCustomSeparator(String s) {
-        return String.valueOf(s.charAt(2));
+        return String.valueOf(s.charAt(INDEX_OF_CUSTOM_SEPARATOR));
     }
 
     private String subStringCustomSeparatorSyntax(String s) {
-        return s.substring(4);
+        return s.substring(LAST_INDEX_OF_CUSTOM_SEPARATOR_SYNTAX);
     }
 
     private String getSplitRegex() {
-        return getSplitRegex(basicSeparators);
+        return getSplitRegex(BASIC_SEPARATORS);
     }
 
     private String getSplitRegex(List<String> separators) {

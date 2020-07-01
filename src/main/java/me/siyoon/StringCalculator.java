@@ -3,7 +3,6 @@ package me.siyoon;
 import java.util.*;
 
 public class StringCalculator {
-    private static final List<String> basicSeparators = Arrays.asList(",", ":");
     private final StringConverter stringConverter;
 
     public StringCalculator() {
