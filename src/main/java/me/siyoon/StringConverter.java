@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class StringConverter {
     private static final List<String> BASIC_SEPARATORS = Arrays.asList(",", ":");
     private static final List<String> STRINGS_TO_CHANGE_TO_ZERO = Arrays.asList("", " ");
     private static final int INDEX_OF_CUSTOM_SEPARATOR = 2;
     private static final int LAST_INDEX_OF_CUSTOM_SEPARATOR_SYNTAX = 4;
+    private static final Pattern PATTERN = Pattern.compile("\\A//.\n.*");
+    private static final String[] EMPTY_STRING_ARRAY = {};
 
     public Integer[] convertStringToNumbers(String inputString) {
         return parseStringsToIntegers(split(inputString));
@@ -24,7 +27,7 @@ public class StringConverter {
 
     private String[] split(String inputString) {
         if (Objects.isNull(inputString)) {
-            return new String[]{};
+            return EMPTY_STRING_ARRAY;
         }
 
         if (hasCustomSeparator(inputString)) {
@@ -44,7 +47,7 @@ public class StringConverter {
     }
 
     private boolean hasCustomSeparator(String s) {
-        return s.matches("\\A//.\n.*");
+        return PATTERN.matcher(s).matches();
     }
 
     private String getCustomSeparator(String s) {
